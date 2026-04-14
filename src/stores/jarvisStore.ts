@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 export type JarvisState = 'idle' | 'listening' | 'thinking' | 'speaking';
-export type Message = { id: string; role: 'user' | 'jarvis'; content: string; timestamp: Date };
+export type Message = { id: string; role: 'user' | 'jarvis'; content: string; timestamp: Date; actions?: Array<{ type: string; payload: string; label: string }> };
 export type Reminder = { id: string; text: string; time: string; done: boolean };
 export type CustomCommand = { id: string; name: string; trigger: string; actions: string[]; voiceResponse: string };
 
@@ -9,7 +9,8 @@ interface JarvisStore {
   state: JarvisState;
   setState: (s: JarvisState) => void;
   messages: Message[];
-  addMessage: (role: 'user' | 'jarvis', content: string) => void;
+  addMessage: (role: 'user' | 'jarvis', content: string, actions?: Message['actions']) => void;
+  updateLastMessage: (content: string) => void;
   reminders: Reminder[];
   addReminder: (text: string, time: string) => void;
   toggleReminder: (id: string) => void;
@@ -25,6 +26,11 @@ interface JarvisStore {
   toggleWidgets: () => void;
   activePanel: 'chat' | 'memory' | 'commands';
   setActivePanel: (p: 'chat' | 'memory' | 'commands') => void;
+  focusMode: boolean;
+  setFocusMode: (v: boolean) => void;
+  // Memory items for AI context
+  memoryItems: Array<{ category: string; key: string; value: string }>;
+  setMemoryItems: (items: Array<{ category: string; key: string; value: string }>) => void;
 }
 
 const uid = () => Math.random().toString(36).slice(2, 9);
@@ -33,10 +39,21 @@ export const useJarvisStore = create<JarvisStore>((set) => ({
   state: 'idle',
   setState: (s) => set({ state: s }),
   messages: [
-    { id: uid(), role: 'jarvis', content: "Good evening. I'm Jarvis, your personal AI system. How can I assist you?", timestamp: new Date() },
+    { id: uid(), role: 'jarvis', content: "Good evening, Commander. I'm Jarvis — your personal AI operating system. All systems online. How can I assist you?", timestamp: new Date() },
   ],
-  addMessage: (role, content) =>
-    set((s) => ({ messages: [...s.messages, { id: uid(), role, content, timestamp: new Date() }] })),
+  addMessage: (role, content, actions) =>
+    set((s) => ({ messages: [...s.messages, { id: uid(), role, content, actions, timestamp: new Date() }] })),
+  updateLastMessage: (content) =>
+    set((s) => {
+      const msgs = [...s.messages];
+      const last = msgs[msgs.length - 1];
+      if (last?.role === 'jarvis') {
+        msgs[msgs.length - 1] = { ...last, content };
+      } else {
+        msgs.push({ id: uid(), role: 'jarvis', content, timestamp: new Date() });
+      }
+      return { messages: msgs };
+    }),
   reminders: [
     { id: uid(), text: 'Review project milestones', time: '7:00 PM', done: false },
     { id: uid(), text: 'Team standup call', time: '9:00 AM', done: true },
@@ -62,4 +79,8 @@ export const useJarvisStore = create<JarvisStore>((set) => ({
   toggleWidgets: () => set((s) => ({ widgetsOpen: !s.widgetsOpen })),
   activePanel: 'chat',
   setActivePanel: (p) => set({ activePanel: p }),
+  focusMode: false,
+  setFocusMode: (v) => set({ focusMode: v }),
+  memoryItems: [],
+  setMemoryItems: (items) => set({ memoryItems: items }),
 }));
