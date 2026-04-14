@@ -14,7 +14,135 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      jarvis_commands: {
+        Row: {
+          actions: Json
+          created_at: string
+          id: string
+          name: string
+          trigger_phrase: string
+          updated_at: string
+          use_count: number | null
+          user_id: string
+          voice_response: string | null
+        }
+        Insert: {
+          actions?: Json
+          created_at?: string
+          id?: string
+          name: string
+          trigger_phrase: string
+          updated_at?: string
+          use_count?: number | null
+          user_id: string
+          voice_response?: string | null
+        }
+        Update: {
+          actions?: Json
+          created_at?: string
+          id?: string
+          name?: string
+          trigger_phrase?: string
+          updated_at?: string
+          use_count?: number | null
+          user_id?: string
+          voice_response?: string | null
+        }
+        Relationships: []
+      }
+      jarvis_conversations: {
+        Row: {
+          action_taken: Json | null
+          content: string
+          created_at: string
+          id: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          action_taken?: Json | null
+          content: string
+          created_at?: string
+          id?: string
+          role: string
+          user_id: string
+        }
+        Update: {
+          action_taken?: Json | null
+          content?: string
+          created_at?: string
+          id?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      jarvis_memory: {
+        Row: {
+          category: string
+          created_at: string
+          id: string
+          key: string
+          last_used_at: string | null
+          metadata: Json | null
+          updated_at: string
+          use_count: number | null
+          user_id: string
+          value: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          id?: string
+          key: string
+          last_used_at?: string | null
+          metadata?: Json | null
+          updated_at?: string
+          use_count?: number | null
+          user_id: string
+          value: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: string
+          key?: string
+          last_used_at?: string | null
+          metadata?: Json | null
+          updated_at?: string
+          use_count?: number | null
+          user_id?: string
+          value?: string
+        }
+        Relationships: []
+      }
+      jarvis_reminders: {
+        Row: {
+          created_at: string
+          id: string
+          is_done: boolean | null
+          remind_at: string
+          text: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_done?: boolean | null
+          remind_at: string
+          text: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_done?: boolean | null
+          remind_at?: string
+          text?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
